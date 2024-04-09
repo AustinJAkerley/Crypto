@@ -9,7 +9,7 @@
 import unittest
 import random
 from crypto.cryptanalysis.crt import crt
-from crypto.cryptanalysis.small_primes_generator import small_primes_generator
+from crypto.cryptanalysis.list_small_primes import list_small_primes
 
 class TestCRT(unittest.TestCase):
     def test_crt_1(self):

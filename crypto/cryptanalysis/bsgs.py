@@ -6,7 +6,7 @@
 # Associated Book Page Nuber: 82
 
 # INPUTS:
-# g - type: int, desc: the small_primes_generator
+# g - type: int, desc: the list_small_primes
 # h - type: int, desc: the result of the exponentiation
 # p - type: int, desc: the prime modulus
 

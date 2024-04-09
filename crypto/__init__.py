@@ -15,7 +15,7 @@ from .cryptanalysis.crt import crt # Chinese Remainder Theorem
 from .cryptanalysis.naive_factor import naive_factor
 from .cryptanalysis.order import order
 from .cryptanalysis.bsgs import bsgs # (Baby Step Giant) Step Discrete Logarithm
-from .cryptanalysis.small_primes_generator import small_primes_generator
+from .cryptanalysis.list_small_primes import list_small_primes
 
 # Ciphers
 # Public Key Ciphers, the actual encryption and decryption, asymmetric key

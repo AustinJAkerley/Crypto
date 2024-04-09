@@ -8,7 +8,7 @@
 # INPUT(s) -
 # max - type: int, desc: The value to find all prime integers under
 
-def small_primes_generator(max): #max being
+def list_small_primes(max): #max being
     small_primes = [2,3,5]
     for i in range (7,max):
         is_prime = True

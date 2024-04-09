@@ -9,11 +9,11 @@
 # h - type: int, desc: number to try to factor
 # smooth - type: int, desc: tells the program the upper limit to check if divisble by
 
-from crypto.cryptanalysis.small_primes_generator import small_primes_generator
+from crypto.cryptanalysis.list_small_primes import list_small_primes
 
 def naive_factor(h, smooth=1000):
     prime_factors = []
-    small_primes = small_primes_generator(smooth)
+    small_primes = list_small_primes(smooth)
     divisors = []
     # Compile a list of factors up to a certain smoothness then attempt to find the smallest solution to g^c % p = 1 , where c is any combination of the factors of g
     for prime in small_primes:

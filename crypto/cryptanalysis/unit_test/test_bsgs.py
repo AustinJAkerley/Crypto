@@ -11,7 +11,7 @@ import unittest
 import random
 from crypto.cryptanalysis.bsgs import bsgs
 from crypto.src.fast_power import fast_power
-from crypto.cryptanalysis.small_primes_generator import small_primes_generator
+from crypto.cryptanalysis.list_small_primes import list_small_primes
 
 class TestBSGS(unittest.TestCase):
     def test_bsgs_1(self): # Book Example
@@ -24,7 +24,7 @@ class TestBSGS(unittest.TestCase):
         self.assertIn(exp_x, xs)
 
     def test_bsgs_2(self):
-        primes = small_primes_generator(1000) # Change this to increase/decrease duration of test
+        primes = list_small_primes(1000) # Change this to increase/decrease duration of test
         del primes[0] # delete 2, all of these are trivial
         del primes[0] # delete 3
         del primes[0] # delte 5

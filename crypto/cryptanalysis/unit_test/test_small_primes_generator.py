@@ -7,13 +7,13 @@
 # Associated Book Page Nuber: 84
 
 import unittest
-from crypto.cryptanalysis.small_primes_generator import small_primes_generator
+from crypto.cryptanalysis.list_small_primes import list_small_primes
 
 class TestSmallPrimesGenerator(unittest.TestCase):
-    def test_small_primes_generator_1(self):
-        print("\n\nRunning test for cryptanalysis module: small_primes_generator")
+    def test_list_small_primes_1(self):
+        print("\n\nRunning test for cryptanalysis module: list_small_primes")
         OneToOneHundo = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
-        MyOneToOneHundo = small_primes_generator(100)
+        MyOneToOneHundo = list_small_primes(100)
         self.assertEqual(OneToOneHundo, MyOneToOneHundo)
 
 

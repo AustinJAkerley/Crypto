@@ -8,7 +8,7 @@
 
 import unittest
 from crypto.src.mod_sqrt import mod_sqrt
-from crypto.cryptanalysis.small_primes_generator import small_primes_generator
+from crypto.cryptanalysis.list_small_primes import list_small_primes
 
 class TestModSqrt(unittest.TestCase):
     def test_mod_sqrt_1(self):
@@ -23,7 +23,7 @@ class TestModSqrt(unittest.TestCase):
     def test_mod_sqrt_2(self):
         # Bulk test with all the primes under 1000
         orig_x = None
-        primes = small_primes_generator(1000)
+        primes = list_small_primes(1000)
         del primes[0]
         for m in primes:
             for i in range(1, m):
