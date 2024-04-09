@@ -95,7 +95,7 @@ class curve:
     def is_point_on_curve(self, P):
         y2 = self.calculate_y2(P[0])
         y = mod_sqrt(y2, self.modulus)
-        if y is not (None, None):
+        if y != (None, None):
             if y[0] == P[1] or y[1] == P[1]:
                 return True
         return False
@@ -103,7 +103,7 @@ class curve:
     def calculate_point(self, x):
         y2 = self.calculate_y2(x)
         y = mod_sqrt(y2)
-        if y is (None, None):
+        if y == (None, None):
             return None
         else:
             return [(x, y[0]), (x, y[1])]
