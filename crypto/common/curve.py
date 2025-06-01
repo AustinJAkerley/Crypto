@@ -12,7 +12,7 @@
 
 import random
 from math import log2
-from crypto.common.mod_inv import mod_inv
+from crypto.common.mod_inv import mod_inv_curve
 from crypto.common.fast_power import fast_power
 from crypto.common.mod_sqrt import mod_sqrt
 
@@ -29,21 +29,23 @@ class curve:
 
     def slope(self, P, Q): # Where P and Q are tuples
         if P == Q:
-            inv_2y_p = mod_inv((2*P[1]) % self.modulus, self.modulus)
-            if isinstance(inv_2y_p, tuple):
+            inv_2y_p = mod_inv_curve((2*P[1]) % self.modulus, self.modulus)
+            if isinstance(inv_2y_p, tuple) and inv_2y_p[0] is False:
                 d = inv_2y_p[1]
+                print(f"Failed mod_inv in slope (doubling): divisor={d}")
                 return [None, None, d]
-            slope = ((3*P[0]*P[0] + self.A) * inv_2y_p) % self.modulus
-            return slope
+            slope_val = ((3*P[0]*P[0] + self.A) * inv_2y_p) % self.modulus
+            return slope_val
         else:
             y_diff = (P[1]-Q[1])%self.modulus
             x_diff = (P[0]-Q[0])%self.modulus
-            inv_x_diff  = mod_inv(x_diff, self.modulus)
-            if isinstance(inv_x_diff,tuple):
+            inv_x_diff  = mod_inv_curve(x_diff, self.modulus)
+            if isinstance(inv_x_diff, tuple) and inv_x_diff[0] is False:
                 d = inv_x_diff[1]
+                print(f"Failed mod_inv in slope (addition): divisor={d}")
                 return [None, None, d]
-            slope = (y_diff * inv_x_diff)%self.modulus
-            return slope
+            slope_val = (y_diff * inv_x_diff)%self.modulus
+            return slope_val
 
     def add(self, P, Q): # Where P and Q are tuples
         if P[0] is None and P[1] is None:
@@ -51,13 +53,16 @@ class curve:
         if Q[0] is None and Q[1] is None:
             return P
 
-        slope = self.slope(P, Q)
+        slope_val = self.slope(P, Q)
 
-        if slope == [None, None, None]:
+        # Propagate factor found in slope
+        if isinstance(slope_val, list) and len(slope_val) == 3 and slope_val[2] is not None:
+            return (None, None, slope_val[2])
+        if slope_val == [None, None, None]:
             return (None, None)
 
-        x_r = (slope * slope - P[0] - Q[0]) % self.modulus
-        y_r = (slope * (P[0] - x_r) - P[1]) % self.modulus
+        x_r = (slope_val * slope_val - P[0] - Q[0]) % self.modulus
+        y_r = (slope_val * (P[0] - x_r) - P[1]) % self.modulus
 
         return (x_r, y_r)
 
@@ -68,7 +73,12 @@ class curve:
         while n:
             if n & 1:
                 R = self.add(R, addend)
+                # Propagate factor if found
+                if isinstance(R, tuple) and len(R) == 3:
+                    return R
             addend = self.add(addend, addend)
+            if isinstance(addend, tuple) and len(addend) == 3:
+                return addend
             n >>= 1
 
         return R

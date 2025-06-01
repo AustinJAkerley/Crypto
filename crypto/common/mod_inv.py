@@ -36,5 +36,21 @@ def mod_inv(a, m): # Where a*b = 1 mod(m)
         inv = (inv % m)
     return inv
 
+def mod_inv_curve(a, m):
+    # Extended Euclidean Algorithm to find modular inverse
+    # Returns the inverse if it exists, otherwise returns a tuple (False, gcd)
+    t, new_t = 0, 1
+    r, new_r = m, a
+    while new_r != 0:
+        quotient = r // new_r
+        t, new_t = new_t, t - quotient * new_t
+        r, new_r = new_r, r - quotient * new_r
+    if r > 1:
+        # No inverse exists, return gcd
+        return (False, r)
+    if t < 0:
+        t = t + m
+    return t
+
 # OUTPUT - type: int
 # inv - type: int, desc: The mathematical inverse modulo m of a, inv = 1/a (mod m), inv*a = 1 (mod m)
