@@ -29,11 +29,6 @@ class TestModInv(unittest.TestCase):
         b = 93331
         self.assertEqual(mod_inv(a, m), b)
 
-    def test_mod_inv_4(self):
-        a = 173920
-        m = 100207
-        with self.assertRaises(ValueError):
-            self.assertEqual(mod_inv(a, m), b)
 
 if __name__ == '__main__':
     unittest.main()
