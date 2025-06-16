@@ -12,19 +12,22 @@ from ..primality_test import primality_test
 
 class TestRandomPrimeGenerator(unittest.TestCase):
     def test_random_prime_1(self):
-        print("\n\nRunning test for src module: random_prime")
+        print("\n\nGenerating 64-bit random prime number...\n")
         rand_prime = random_prime(64)
         self.assertEqual(primality_test(rand_prime), True)
 
     def test_random_prime_2(self):
+        print("\n\nGenerating 128-bit random prime number...\n")
         rand_prime = random_prime(128)
         self.assertEqual(primality_test(rand_prime), True)
 
     def test_random_prime_3(self):
+        print("\n\nGenerating 256-bit random prime number...\n")
         rand_prime = random_prime(256)
         self.assertEqual(primality_test(rand_prime), True)
 
     def test_random_prime_4(self):
+        print("\n\nGenerating 512-bit random prime number...\n")
         rand_prime = random_prime(512)
         self.assertEqual(primality_test(rand_prime), True)
 
