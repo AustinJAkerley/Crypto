@@ -18,30 +18,44 @@
 def eea(x, y):
     if x <= 0 or y <= 0:
         raise ValueError("x or y cannot be 0 or less")
-
     starting_x = x
     starting_y = y
-    q_l = 0
-    r_l = x
-    s = 0
-    s_l = 1
-    s_l2 = None
-    t = 1
-    t_l = 0
-    t_l2 = None
-    quotient_remainder = (None, None)
-    while quotient_remainder[1] != 0:
-        quotient_remainder = divmod(y, x)
-        y = x
-        x = quotient_remainder[1]
-        t_l2=t_l
-        t_l = t
-        s_l2=s_l
-        s_l = s
-        s = (s_l2-(s_l*q_l))
-        t = (t_l2-(t_l*q_l))
-        q_l = quotient_remainder[0]
-    return {"gcd": y, "a":s, "x":starting_x, "b":t, "y":starting_y} # a is mod inv of x
+    s, s_l = 0, 1
+    t, t_l = 1, 0
+    while x != 0:
+        q_l, r = divmod(y, x)
+        y, x = x, r
+        s, s_l = s_l - q_l * s, s
+        t, t_l = t_l - q_l * t, t
+    return {"gcd": y, "a": s_l, "x": starting_x, "b": t_l, "y": starting_y}
+
+# def eea(x, y):
+#     if x <= 0 or y <= 0:
+#         raise ValueError("x or y cannot be 0 or less")
+
+#     starting_x = x
+#     starting_y = y
+#     q_l = 0
+#     r_l = x
+#     s = 0
+#     s_l = 1
+#     s_l2 = None
+#     t = 1
+#     t_l = 0
+#     t_l2 = None
+#     quotient_remainder = (None, None)
+#     while quotient_remainder[1] != 0:
+#         quotient_remainder = divmod(y, x)
+#         y = x
+#         x = quotient_remainder[1]
+#         t_l2=t_l
+#         t_l = t
+#         s_l2=s_l
+#         s_l = s
+#         s = (s_l2-(s_l*q_l))
+#         t = (t_l2-(t_l*q_l))
+#         q_l = quotient_remainder[0]
+#     return {"gcd": y, "a":s, "x":starting_x, "b":t, "y":starting_y} # a is mod inv of x
 
 # OUTPUT - type: dictionary or None
 # {
