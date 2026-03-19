@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoLib - PyScript Browser Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script type="module" src="https://pyscript.net/releases/2024.11.1/core.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .demo-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .demo-card h2 {
+            color: #7c3aed;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .demo-card p {
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            color: #374151;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .result-title {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.5rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .loading {
+            color: #7c3aed;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 CryptoLib Browser Demo</h1>
+            <p>Cryptographic algorithms running directly in your browser with PyScript</p>
+        </div>
+
+        <div class="demo-grid">
+            <!-- Fast Power Demo -->
+            <div class="demo-card">
+                <h2>⚡ Fast Power (Modular Exponentiation)</h2>
+                <p>Compute x^e mod m efficiently using fast power algorithm</p>
+                <div class="input-group">
+                    <label for="fp-x">Base (x)</label>
+                    <input type="number" id="fp-x" value="5" />
+                </div>
+                <div class="input-group">
+                    <label for="fp-e">Exponent (e)</label>
+                    <input type="number" id="fp-e" value="3" />
+                </div>
+                <div class="input-group">
+                    <label for="fp-m">Modulus (m)</label>
+                    <input type="number" id="fp-m" value="13" />
+                </div>
+                <button class="btn" py-click="compute_fast_power()">Compute</button>
+                <div id="fp-result"></div>
+            </div>
+
+            <!-- Extended Euclidean Algorithm Demo -->
+            <div class="demo-card">
+                <h2>🔢 Extended Euclidean Algorithm</h2>
+                <p>Find GCD and coefficients: gcd(x,y) = ax + by</p>
+                <div class="input-group">
+                    <label for="eea-x">First number (x)</label>
+                    <input type="number" id="eea-x" value="240" />
+                </div>
+                <div class="input-group">
+                    <label for="eea-y">Second number (y)</label>
+                    <input type="number" id="eea-y" value="46" />
+                </div>
+                <button class="btn" py-click="compute_eea()">Compute</button>
+                <div id="eea-result"></div>
+            </div>
+
+            <!-- RSA Mini Demo -->
+            <div class="demo-card">
+                <h2>🔒 Simple RSA Demo</h2>
+                <p>Encrypt and decrypt a small message using RSA (with small primes for browser speed)</p>
+                <div class="input-group">
+                    <label for="rsa-msg">Message (small integer)</label>
+                    <input type="number" id="rsa-msg" value="42" />
+                </div>
+                <div class="input-group">
+                    <label for="rsa-p">Prime p</label>
+                    <input type="number" id="rsa-p" value="61" />
+                </div>
+                <div class="input-group">
+                    <label for="rsa-q">Prime q</label>
+                    <input type="number" id="rsa-q" value="53" />
+                </div>
+                <div class="input-group">
+                    <label for="rsa-e">Public exponent e</label>
+                    <input type="number" id="rsa-e" value="17" />
+                </div>
+                <button class="btn" py-click="compute_rsa()">Encrypt & Decrypt</button>
+                <div id="rsa-result"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="py">
+from math import log2
+from pyscript import document
+
+# Fast Power Algorithm
+def fast_power(x, e, m):
+    if e == m:
+        return x
+    elif e == m-1:
+        return 1
+    elif e == 0:
+        return 1
+    
+    remainder = e
+    sum_pwrs_2 = []
+    while remainder != 0:
+        upper = int(log2(remainder))
+        sum_pwrs_2.append(upper)
+        remainder = remainder - (2**upper)
+    
+    result = 1
+    square = x
+    for i in range(0, sum_pwrs_2[0]+1):
+        if i in sum_pwrs_2:
+            result = (result * square) % m
+        square = (square * square) % m
+    return result
+
+
+# Extended Euclidean Algorithm
+def eea(x, y):
+    if x <= 0 or y <= 0:
+        raise ValueError("x or y cannot be 0 or less")
+    starting_x = x
+    starting_y = y
+    s, s_l = 0, 1
+    t, t_l = 1, 0
+    while x != 0:
+        q_l, r = divmod(y, x)
+        y, x = x, r
+        s, s_l = s_l - q_l * s, s
+        t, t_l = t_l - q_l * t, t
+    return {"gcd": y, "a": s_l, "x": starting_x, "b": t_l, "y": starting_y}
+
+
+# Modular Inverse
+def mod_inv(a, m):
+    if m <= 0:
+        raise ValueError("m cannot be 0 or less")
+    elif a > m:
+        raise ValueError("a cannot be larger than m")
+    elif a == 0:
+        return 0
+    
+    eea_res = eea(a, m)
+    inv = eea_res.get("a")
+    if eea_res["gcd"] != 1:
+        if eea_res["gcd"] != m:
+            raise ValueError("a divides m, no modular inverse exists")
+    inv = inv % m
+    return inv
+
+
+# Event handlers
+def compute_fast_power():
+    try:
+        x = int(document.querySelector("#fp-x").value)
+        e = int(document.querySelector("#fp-e").value)
+        m = int(document.querySelector("#fp-m").value)
+        
+        result = fast_power(x, e, m)
+        
+        output = f"""<div class="result-title">Result:</div>
+{x}^{e} mod {m} = {result}"""
+        
+        document.querySelector("#fp-result").innerHTML = f'<div class="result">{output}</div>'
+    except Exception as ex:
+        document.querySelector("#fp-result").innerHTML = f'<div class="result">Error: {str(ex)}</div>'
+
+
+def compute_eea():
+    try:
+        x = int(document.querySelector("#eea-x").value)
+        y = int(document.querySelector("#eea-y").value)
+        
+        result = eea(x, y)
+        
+        output = f"""<div class="result-title">Result:</div>
+gcd({result['x']}, {result['y']}) = {result['gcd']}
+{result['a']} × {result['x']} + {result['b']} × {result['y']} = {result['gcd']}"""
+        
+        document.querySelector("#eea-result").innerHTML = f'<div class="result">{output}</div>'
+    except Exception as ex:
+        document.querySelector("#eea-result").innerHTML = f'<div class="result">Error: {str(ex)}</div>'
+
+
+def compute_rsa():
+    try:
+        m = int(document.querySelector("#rsa-msg").value)
+        p = int(document.querySelector("#rsa-p").value)
+        q = int(document.querySelector("#rsa-q").value)
+        e = int(document.querySelector("#rsa-e").value)
+        
+        # Calculate N and phi
+        N = p * q
+        phi = (p - 1) * (q - 1)
+        
+        # Check if e is valid
+        gcd_result = eea(e, phi)
+        if gcd_result['gcd'] != 1:
+            raise ValueError(f"e must be coprime to φ(N). gcd(e, φ) = {gcd_result['gcd']}")
+        
+        # Encrypt
+        ciphertext = fast_power(m, e, N)
+        
+        # Calculate private exponent d
+        d = mod_inv(e, phi)
+        
+        # Decrypt
+        decrypted = fast_power(ciphertext, d, N)
+        
+        output = f"""<div class="result-title">RSA Calculation:</div>
+N = p × q = {p} × {q} = {N}
+φ(N) = (p-1)(q-1) = {phi}
+Public key: (N={N}, e={e})
+Private key: (N={N}, d={d})
+
+Encryption:
+  Message: {m}
+  Ciphertext: {m}^{e} mod {N} = {ciphertext}
+
+Decryption:
+  Ciphertext: {ciphertext}
+  Decrypted: {ciphertext}^{d} mod {N} = {decrypted}
+
+✓ Original message recovered: {m} == {decrypted}"""
+        
+        document.querySelector("#rsa-result").innerHTML = f'<div class="result">{output}</div>'
+    except Exception as ex:
+        document.querySelector("#rsa-result").innerHTML = f'<div class="result">Error: {str(ex)}</div>'
+    </script>
+</body>
+</html>
