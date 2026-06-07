@@ -52,6 +52,8 @@ class curve:
             return Q
         if Q[0] is None and Q[1] is None:
             return P
+        if P[0] == Q[0] and (P[1] + Q[1]) % self.modulus == 0: # Fixes the error found by z3 verification.
+            return (None, None)
 
         slope_val = self.slope(P, Q)
 

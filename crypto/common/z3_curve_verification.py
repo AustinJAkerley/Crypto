@@ -234,9 +234,57 @@ def prove_commutativity(A, B, p):
     raise RuntimeError(f"Z3 returned unknown: {result}")
 
 
-def main():
-    # Concrete instance: curve(3, 8, 13), the same curve used by test_curve.py.
-    A, B, p = 3, 8, 13
+def prove_associativity(A, B, p):
+    # Prove (over the spec) that (P + Q) + R == P + (Q + R) for all distinct points.
+    # All six x-coordinates (inputs + intermediates + outputs) must be pairwise distinct
+    # to stay in the chord-addition domain. Returns (proved: bool, counterexample: dict | None).
+    x1, y1, x2, y2, x3, y3 = (
+        _bv("x1"), _bv("y1"), _bv("x2"), _bv("y2"), _bv("x3"), _bv("y3"),
+    )
+    # Left association: (P + Q) + R
+    sPQ, xPQ, yPQ = _bv("sPQ"), _bv("xPQ"), _bv("yPQ")
+    sLR, xL, yL    = _bv("sLR"), _bv("xL"),  _bv("yL")
+    # Right association: P + (Q + R)
+    sQR, xQR, yQR = _bv("sQR"), _bv("xQR"), _bv("yQR")
+    sPR, xR, yR    = _bv("sPR"), _bv("xR"),  _bv("yR")
+
+    solver = Solver()
+    all_vars = [x1, y1, x2, y2, x3, y3,
+                sPQ, xPQ, yPQ, sLR, xL, yL,
+                sQR, xQR, yQR, sPR, xR, yR]
+    solver.add(_in_field(all_vars, p))
+    solver.add(_on_curve(x1, y1, A, B, p))
+    solver.add(_on_curve(x2, y2, A, B, p))
+    solver.add(_on_curve(x3, y3, A, B, p))
+
+    # All input and intermediate x-coords must be pairwise distinct (chord domain)
+    for a, b in [(x1, x2), (x1, x3), (x2, x3),
+                 (x1, xPQ), (x3, xPQ), (x2, xQR), (x1, xQR),
+                 (xPQ, x3), (x1, xQR)]:
+        solver.add(a != b)
+
+    _add_formula(solver, x1, y1, x2, y2, sPQ, xPQ, yPQ, p)   # P + Q
+    _add_formula(solver, xPQ, yPQ, x3, y3, sLR, xL, yL, p)   # (P+Q) + R
+    _add_formula(solver, x2, y2, x3, y3, sQR, xQR, yQR, p)   # Q + R
+    _add_formula(solver, x1, y1, xQR, yQR, sPR, xR, yR, p)   # P + (Q+R)
+
+    solver.add(Or(_mod(xL, p) != _mod(xR, p), _mod(yL, p) != _mod(yR, p)))
+    result = solver.check()
+    if result == unsat:
+        return True, None
+    if result == sat:
+        return False, _model(solver)
+    raise RuntimeError(f"Z3 returned unknown: {result}")
+
+
+def main(A=None, B=None, p=None):
+    import sys
+    if A is None or B is None or p is None:
+        args = sys.argv[1:]
+        if len(args) == 3:
+            A, B, p = int(args[0]), int(args[1]), int(args[2])
+        else:
+            A, B, p = 3, 8, 13
     print(f"Verifying crypto.common.curve on: y^2 = x^3 + {A}x + {B} (mod {p})\n")
 
     ok, mismatches = verify_add_matches_spec(A, B, p)
@@ -273,6 +321,13 @@ def main():
               "(Z3 returned unsat -> no counterexample exists).")
     else:
         print(f"[COMMUTATIVITY]  FAILED. Counterexample found by Z3: {ce}")
+
+    proved, ce = prove_associativity(A, B, p)
+    if proved:
+        print("[ASSOCIATIVITY]  PROVED for ALL distinct on-curve points "
+              "(Z3 returned unsat -> no counterexample exists).")
+    else:
+        print(f"[ASSOCIATIVITY]  FAILED. Counterexample found by Z3: {ce}")
 
     print("\nNaive unit tests check a handful of points; Z3 checks your "
           "implementation against the spec on every point on the curve.")
